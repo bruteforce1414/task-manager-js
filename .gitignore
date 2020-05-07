@@ -1,25 +1,7 @@
-# OS
+node_modules
+yarn.lock
 .DS_Store
-.vscode
-.idea
-*.so
-
-# Build
-/build/bin/
-vendor
-dist
-proto/*.pb.go
-
-# Dep manager
-Gopkg.lock
-
-# Testing
-coverage.txt
-profile.out
-
-# IDE
 .idea/
-*.iml
-
-# Graphviz
-dependency-graph.png
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
