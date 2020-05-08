@@ -17,6 +17,7 @@ import ColumnList from './ColumnList';
 import ConfirmDialog from './ConfirmDialog';
 import If from './If';
 import './App.css';
+import * as $ from "react/lib/ReactDOMFactories";
 
 /**
  * @description Main App component.
@@ -41,10 +42,11 @@ class App extends Component {
 		this.state = {
 			items: [],
 			taskIdCounter: 0,
-			submitDisabled: true,
+			submitDisabled: false,
 			slideIndex: 0,
 			dialogOpen: false,
 			removeMode: false,
+			isLoaded: false,
 		};
 	}
 
@@ -52,16 +54,38 @@ class App extends Component {
 	 * Lifecycle event handler called just after the App loads into the DOM.
 	 * Get any saved items and taskIdCounter from the local storage and setup state with it.
 	 */
+
 	componentWillMount() {
-		const toDoListItems = window.localStorage.getItem('toDoListItems') || '[]';
-		const taskIdCounter = window.localStorage.getItem('taskIdCounter') || 0;
-		//Get
-		this.setState(
-			{
-				items: JSON.parse(toDoListItems),
-				taskIdCounter: taskIdCounter,
-			}
-		);
+		/*const {items = []} = this.state;
+
+		let url = "http://localhost:8080/v1/tasks?offset=1&limit=20";
+
+		fetch(url, {
+			method: 'GET',
+			headers: {
+				Accept: 'application/json',
+				'Content-Type': 'application/json',
+			},
+
+		})
+			.then((response) => response.json())
+			.then(results => {
+				[results].forEach(function (child) {
+					items.push( {"title" : child.title ,"description" : child.description});
+					console.log(child)
+				});
+			})
+*/
+
+		/*     const toDoListItems = window.localStorage.getItem('toDoListItems') || '[]';
+             const taskIdCounter = window.localStorage.getItem('taskIdCounter') || 0;
+             //Get
+             this.setState(
+                 {
+                     items: JSON.parse(toDoListItems),
+                     taskIdCounter: taskIdCounter,
+                 }
+             );*/
 	}
 
 	/**
@@ -69,28 +93,58 @@ class App extends Component {
 	 */
 	addTask = () => {
 		const input = this.taskInput.input || {};
-		const { value = '' } = input;
+		const {value = ''} = input;
 
 		if (value === '') return;
 
-		this.setState(previousState => {
-			const { items = [] } = previousState;
-			const { taskIdCounter = 0 } = previousState;
-			const taskId = taskIdCounter+1;
+		 this.setState(async previousState =>{
+			const {items = []} = previousState;
+			const {taskIdCounter = 0} = previousState;
+			const taskId = taskIdCounter + 1;
 			const newTask = {
 				id: taskId,
 				title: value,
-				
+				date: new Date().getDate() + "." + (new Date().getMonth() + 1) + "." + new Date().getFullYear(),
+				time: new Date().getHours() + ":" + new Date().getMinutes() + ":" + new Date().getSeconds(),
 				status: 'To Do'
 			};
+			await fetch("http://localhost:8080/v1/tasks", {
+				method: 'POST',
+				headers: {
+					Accept: 'application/json',
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({
+					Title: value,
+					Description: "description",
+					Time: "",
+					Date: null,
+					Shared: true,
+				}),
+
+			})
+
+
+			let url = "http://localhost:8080/v1/tasks?offset=1&limit=20";
+
+			const columns = [
+
+			//	{title: 'To Do', items: items /*.filter( item => item.status === 'To Do')*/, icon: <TodoIcon/>},
+				//	{ title: 'Done', items: items.filter( item => item.status === 'Done'), icon: <CheckIcon />},
+				//	{ title: 'All', items, icon: <ListIcon />},
+			];
+
+
 			items.push(newTask);
 			return {
 				items: items.sort(sortBy('id')),
-				submitDisabled: true,
+				submitDisabled: false,
 				taskIdCounter: taskId,
 			}
+
+
 		}, function stateUpdateComplete() {
-			this.taskInput.input.value = '';
+			//	this.taskInput.input.value = '';
 			this.updateLocalStorageItems(this.state.items);
 			this.updateTaskCounter(this.state.taskIdCounter);
 		}.bind(this));
@@ -102,8 +156,8 @@ class App extends Component {
 	 */
 	handleUpdateTask = (task) => {
 		this.setState(previousState => {
-			const { items } = previousState;
-			const filteredItems = items.filter( item => item.id !== task.id);
+			const {items} = previousState;
+			const filteredItems = items.filter(item => item.id !== task.id);
 			task.status = (task.status === 'To Do') ? 'Done' : 'To Do';
 			filteredItems.push(task);
 			return {
@@ -120,8 +174,8 @@ class App extends Component {
 	 */
 	handleRemoveTask = (task) => {
 		this.setState(previousState => {
-			const { items } = previousState;
-			const filteredItems = items.filter( item => item.id !== task.id);
+			const {items} = previousState;
+			const filteredItems = items.filter(item => item.id !== task.id);
 			return {
 				items: filteredItems.sort(sortBy('id'))
 			}
@@ -137,10 +191,9 @@ class App extends Component {
 	 * @param {value} value - The task description
 	 */
 	handleTextFieldChange = (event, value) => {
-		if((value.length > 0) && this.state.submitDisabled){
+		if ((value.length > 0) && this.state.submitDisabled) {
 			this.setState({submitDisabled: false});
-		}
-		else if((value.length === 0) && !this.state.submitDisabled){
+		} else if ((value.length === 0) && !this.state.submitDisabled) {
 			this.setState({submitDisabled: true});
 		}
 	};
@@ -224,125 +277,167 @@ class App extends Component {
 	 */
 	keyPress = (e) => {
 		// If Enter key
-		if(e.keyCode === 13){
+		if (e.keyCode === 13) {
 			// Call method to add the task if not empty
 			this.addTask();
 			// put the login here
 		}
 	};
 
-	render() {
-		const { items = [] }  = this.state;
+	componentDidMount() {
+
+		const {items = []} = this.state;
+
+		let url = "http://localhost:8080/v1/tasks?offset=1&limit=20";
+
+		fetch(url, {
+			method: 'GET',
+			headers: {
+				Accept: 'application/json',
+				'Content-Type': 'application/json',
+			},
+
+		})
+			.then((response) => response.json())
+			.then( results => {
+				 [results].forEach(async function (child) {
+				 	console.log("ADDED", child)
+					 await items.push({"title": child.title, "description": child.description});
+					console.log(child)
+				});
+			})
+
+
+		console.log("ITEMS ARE", items)
 		const columns = [
-			{ title: 'To Do', items: items.filter( item => item.status === 'To Do'), icon: <TodoIcon />},
-			{ title: 'Done', items: items.filter( item => item.status === 'Done'), icon: <CheckIcon />},
-			{ title: 'All', items, icon: <ListIcon />},
+
+			{title: 'To Do', items: items /*.filter( item => item.status === 'To Do')*/, icon: <TodoIcon/>},
+			//	{ title: 'Done', items: items.filter( item => item.status === 'Done'), icon: <CheckIcon />},
+			//	{ title: 'All', items, icon: <ListIcon />},
 		];
+	}
+
+	render() {
+		const {items = []} = this.state;
+		const columns = [
+
+			{title: 'To Do', items: items /*.filter( item => item.status === 'To Do')*/, icon: <TodoIcon/>},
+			//	{ title: 'Done', items: items.filter( item => item.status === 'Done'), icon: <CheckIcon />},
+			//	{ title: 'All', items, icon: <ListIcon />},
+		];
+		{
 		return (
-			<MuiThemeProvider>
-				<div className="App">
-					{/* Clear Tasks Confirmation Dialog */}
-					<ConfirmDialog
-						title="Clear All Tasks"
-						message={'Are you sure you want to remove all tasks from the App?'}
-						onCancel={this.handleDialogClose}
-						onConfirm={this.clearTasks}
-						open={this.state.dialogOpen}
-					/>
-					<AppBar
-						title={<span style={{color: 'white'}}>To-Do List</span>}
-						showMenuIconButton={false}
-						style={{backgroundColor: 'rgb(0, 151, 167)', position: 'fixed', zIndex: 9999,}}
-					/>
-					<div className="App-container">
-						<div style={{position: 'fixed', width: '100%', paddingTop: 64, zIndex: 8888, backgroundColor: 'white'}}>
-							<TextField
-								hintText="Type task"
-								floatingLabelText="Add Task"
-								ref={(taskInput) => {
-									this.taskInput = taskInput;
-								}}
-								disabled={this.state.removeMode}
-								style={{margin: 10, width: '60%', maxWidth: 300}}
-								onChange={this.handleTextFieldChange}
-								onKeyDown={this.keyPress}
-							/>
-							<RaisedButton
-								style={{margin: 10, width: '30%', maxWidth: 56}}
-								label="Create"
-								onClick={this.addTask}
-								disabled={this.state.submitDisabled} />
-							<Tabs
-								onChange={this.handleChange}
-								value={this.state.slideIndex}
-							>
-								{columns.map((column,index) => (
-									<Tab
-										key={index}
-										value={index}
-										icon={column.icon}
-										label={
-											<div>
-												{column.title} ({(column.title !== 'All') ? column.items.filter(item => item.status === column.title).length: items.length})
-											</div>
-										}
-									/>
-								))}
-							</Tabs>
-						</div>
-						<div className="app-separator">-</div>
-						<CSSTransitionGroup
-							transitionName="remove-mode-animation"
-							transitionEnterTimeout={300}
-							transitionLeaveTimeout={300}>
-							{this.state.removeMode &&
+				<MuiThemeProvider>
+					<div className="App">
+						{/* Clear Tasks Confirmation Dialog */}
+						<ConfirmDialog
+							title="Clear All Tasks"
+							message={'Are you sure you want to remove all tasks from the App?'}
+							onCancel={this.handleDialogClose}
+							onConfirm={this.clearTasks}
+							open={this.state.dialogOpen}
+						/>
+						<AppBar
+							title={<span style={{color: 'white'}}>To-Do List</span>}
+							showMenuIconButton={false}
+							style={{backgroundColor: 'rgb(0, 151, 167)', position: 'fixed', zIndex: 9999,}}
+						/>
+						<div className="App-container">
+							<div style={{
+								position: 'fixed',
+								width: '100%',
+								paddingTop: 64,
+								zIndex: 8888,
+								backgroundColor: 'white'
+							}}>
+								<TextField
+									hintText="Type task"
+									floatingLabelText="Add Task"
+									ref={(taskInput) => {
+										this.taskInput = taskInput;
+									}}
+									disabled={this.state.removeMode}
+									style={{margin: 10, width: '60%', maxWidth: 300}}
+									onChange={this.handleTextFieldChange}
+									onKeyDown={this.keyPress}
+								/>
+								<RaisedButton
+									style={{margin: 10, width: '30%', maxWidth: 56}}
+									label="Create"
+									onClick={this.addTask}
+									disabled={this.state.submitDisabled}/>
+								<Tabs
+									onChange={this.handleChange}
+									value={this.state.slideIndex}
+								>
+									{columns.map((column, index) => (
+										<Tab
+											key={index}
+											value={index}
+											icon={column.icon}
+											label={
+												<div>
+													{column.title} ({(column.title !== 'All') ? column.items.filter(item => item.status === column.title).length : items.length})
+												</div>
+											}
+										/>
+									))}
+								</Tabs>
+							</div>
+							<div className="app-separator">-</div>
+							<CSSTransitionGroup
+								transitionName="remove-mode-animation"
+								transitionEnterTimeout={300}
+								transitionLeaveTimeout={300}>
+								{this.state.removeMode &&
 								<div className="remove-mode">
 									<RaisedButton
-									label="Delete All Tasks"
-									secondary={true}
-									onClick={this.handleDialogOpen}
+										label="Delete All Tasks"
+										secondary={true}
+										onClick={this.handleDialogOpen}
 									/>
 								</div>
-							}
-							<div className="app-lists">
-								<SwipeableViews
-									index={this.state.slideIndex}
-									onChangeIndex={this.handleChange}
-									style={{width: '100%'}}
-								>
-									{columns.map((column,index) => (
-										<div
-											className="swipeable-views"
-											key={index}>
-											<ColumnList
-												title={column.title}
-												items={column.items}
-												updateTask={this.handleUpdateTask}
-												removeTask={this.handleRemoveTask}
-												removeMode={this.state.removeMode}
-											/>
-										</div>
-									))}
-								</SwipeableViews>
-							</div>
-						</CSSTransitionGroup>
+								}
+								<div className="app-lists">
+									<SwipeableViews
+										index={this.state.slideIndex}
+										onChangeIndex={this.handleChange}
+										style={{width: '100%'}}
+									>
+										{columns.map((column, index) => (
+											<div
+												className="swipeable-views"
+												key={index}>
+												<ColumnList
+													title={column.title}
+													items={column.items}
+													updateTask={this.handleUpdateTask}
+													removeTask={this.handleRemoveTask}
+													removeMode={this.state.removeMode}
+												/>
+											</div>
+										))}
+									</SwipeableViews>
+								</div>
+							</CSSTransitionGroup>
+						</div>
+						<div className="enable-remove-mode">
+							<If test={!this.state.removeMode}>
+								<FloatingActionButton onClick={this.enableRemoveMode}>
+									<EditIcon/>
+								</FloatingActionButton>
+							</If>
+							<If test={this.state.removeMode}>
+								<FloatingActionButton secondary={true} onClick={this.disableRemoveMode}>
+									<CloseIcon/>
+								</FloatingActionButton>
+							</If>
+						</div>
 					</div>
-					<div className="enable-remove-mode">
-						<If test={!this.state.removeMode}>
-							<FloatingActionButton onClick={this.enableRemoveMode}>
-								<EditIcon />
-							</FloatingActionButton>
-						</If>
-						<If test={this.state.removeMode}>
-							<FloatingActionButton secondary={true} onClick={this.disableRemoveMode}>
-								<CloseIcon />
-							</FloatingActionButton>
-						</If>
-					</div>
-				</div>
-			</MuiThemeProvider>
-		);
+				</MuiThemeProvider>
+			);
+		}
 	}
-}
 
+}
 export default App;
