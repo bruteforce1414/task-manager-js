@@ -17,7 +17,7 @@ import ColumnList from './ColumnList';
 import ConfirmDialog from './ConfirmDialog';
 import If from './If';
 import './App.css';
-import * as $ from "react/lib/ReactDOMFactories";
+//import * as $ from "react/lib/ReactDOMFactories";
 
 /**
  * @description Main App component.
@@ -55,39 +55,6 @@ class App extends Component {
 	 * Get any saved items and taskIdCounter from the local storage and setup state with it.
 	 */
 
-	componentWillMount() {
-		/*const {items = []} = this.state;
-
-		let url = "http://localhost:8080/v1/tasks?offset=1&limit=20";
-
-		fetch(url, {
-			method: 'GET',
-			headers: {
-				Accept: 'application/json',
-				'Content-Type': 'application/json',
-			},
-
-		})
-			.then((response) => response.json())
-			.then(results => {
-				[results].forEach(function (child) {
-					items.push( {"title" : child.title ,"description" : child.description});
-					console.log(child)
-				});
-			})
-*/
-
-		/*     const toDoListItems = window.localStorage.getItem('toDoListItems') || '[]';
-             const taskIdCounter = window.localStorage.getItem('taskIdCounter') || 0;
-             //Get
-             this.setState(
-                 {
-                     items: JSON.parse(toDoListItems),
-                     taskIdCounter: taskIdCounter,
-                 }
-             );*/
-	}
-
 	/**
 	 * @description Add task to the To Do list.
 	 */
@@ -97,7 +64,9 @@ class App extends Component {
 
 		if (value === '') return;
 
-		 this.setState(async previousState =>{
+		console.log("VALUE is", input)
+
+		 this.setState( previousState =>{
 			const {items = []} = previousState;
 			const {taskIdCounter = 0} = previousState;
 			const taskId = taskIdCounter + 1;
@@ -108,40 +77,29 @@ class App extends Component {
 				time: new Date().getHours() + ":" + new Date().getMinutes() + ":" + new Date().getSeconds(),
 				status: 'To Do'
 			};
-			await fetch("http://localhost:8080/v1/tasks", {
-				method: 'POST',
-				headers: {
-					Accept: 'application/json',
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify({
-					Title: value,
-					Description: "description",
-					Time: "",
-					Date: null,
-					Shared: true,
-				}),
+			 fetch("http://localhost:8080/v1/tasks", {
+				 method: 'POST',
+				 headers: {
+					 Accept: 'application/json',
+					 'Content-Type': 'application/json',
+				 },
+				 body: JSON.stringify({
+					 Title: value,
+					 Description: "description",
+					 Time: "",
+					 Date: null,
+					 Shared: true,
+				 }),
 
-			})
+			 }).then(r=>console.log(r))
 
+				 items.push(newTask);
 
-			let url = "http://localhost:8080/v1/tasks?offset=1&limit=20";
-
-			const columns = [
-
-			//	{title: 'To Do', items: items /*.filter( item => item.status === 'To Do')*/, icon: <TodoIcon/>},
-				//	{ title: 'Done', items: items.filter( item => item.status === 'Done'), icon: <CheckIcon />},
-				//	{ title: 'All', items, icon: <ListIcon />},
-			];
-
-
-			items.push(newTask);
-			return {
-				items: items.sort(sortBy('id')),
-				submitDisabled: false,
-				taskIdCounter: taskId,
-			}
-
+			 return {
+				 items: items.sort(sortBy('id')),
+				 submitDisabled: false,
+				 taskIdCounter: taskId,
+			 }
 
 		}, function stateUpdateComplete() {
 			//	this.taskInput.input.value = '';
@@ -286,7 +244,7 @@ class App extends Component {
 
 	componentDidMount() {
 
-		const {items = []} = this.state;
+	/*	const {items = []} = this.state;
 
 		let url = "http://localhost:8080/v1/tasks?offset=1&limit=20";
 
@@ -302,24 +260,26 @@ class App extends Component {
 			.then( results => {
 				 [results].forEach(async function (child) {
 				 	console.log("ADDED", child)
-					 await items.push({"title": child.title, "description": child.description});
+					 items.push({"title": child.title, "description": child.description});
 					console.log(child)
 				});
 			})
 
-
 		console.log("ITEMS ARE", items)
-		const columns = [
+	/!*	if (items.length>0) {
+			const columns = [
 
-			{title: 'To Do', items: items /*.filter( item => item.status === 'To Do')*/, icon: <TodoIcon/>},
-			//	{ title: 'Done', items: items.filter( item => item.status === 'Done'), icon: <CheckIcon />},
-			//	{ title: 'All', items, icon: <ListIcon />},
-		];
+				{title: 'To Do', items: items /!*.filter( item => item.status === 'To Do')*!/, icon: <TodoIcon/>},
+				//	{ title: 'Done', items: items.filter( item => item.status === 'Done'), icon: <CheckIcon />},
+				//	{ title: 'All', items, icon: <ListIcon />},
+			];
+		}*!/*/
 	}
 
 	render() {
 		const {items = []} = this.state;
 		const columns = [
+
 
 			{title: 'To Do', items: items /*.filter( item => item.status === 'To Do')*/, icon: <TodoIcon/>},
 			//	{ title: 'Done', items: items.filter( item => item.status === 'Done'), icon: <CheckIcon />},
