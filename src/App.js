@@ -243,11 +243,9 @@ class App extends Component {
 	};
 
 	componentDidMount() {
-
-	/*	const {items = []} = this.state;
+		const {items = []} = this.state;
 
 		let url = "http://localhost:8080/v1/tasks?offset=1&limit=20";
-
 		fetch(url, {
 			method: 'GET',
 			headers: {
@@ -256,32 +254,41 @@ class App extends Component {
 			},
 
 		})
-			.then((response) => response.json())
-			.then( results => {
-				 [results].forEach(async function (child) {
-				 	console.log("ADDED", child)
-					 items.push({"title": child.title, "description": child.description});
-					console.log(child)
-				});
-			})
+			.then(async function(data) {
+				let commits = await data.json();
 
-		console.log("ITEMS ARE", items)
-	/!*	if (items.length>0) {
+				console.log("ОТВЕТ", commits.length)
+
+				for (var i = 0; i < commits.length; i++) {
+					console.log("элемент",commits[i])
+					items.push(commits[i])
+				}
+
+	})
+
+
+	console.log("ITEMS ARE", items)
 			const columns = [
 
-				{title: 'To Do', items: items /!*.filter( item => item.status === 'To Do')*!/, icon: <TodoIcon/>},
+				{title: 'To Do', items: items /*.filter( item => item.status === 'To Do')*/, icon: <TodoIcon/>},
 				//	{ title: 'Done', items: items.filter( item => item.status === 'Done'), icon: <CheckIcon />},
 				//	{ title: 'All', items, icon: <ListIcon />},
 			];
-		}*!/*/
-	}
+		return {
+
+			items: items.sort(sortBy('id')),
+
+		}
+
+		}
 
 	render() {
 		const {items = []} = this.state;
+
+
 		const columns = [
 
-
-			{title: 'To Do', items: items /*.filter( item => item.status === 'To Do')*/, icon: <TodoIcon/>},
+			{title: 'To Do', items: items/*.filter( item => item.status === 'To Do')*/, icon: <TodoIcon/>},
 			//	{ title: 'Done', items: items.filter( item => item.status === 'Done'), icon: <CheckIcon />},
 			//	{ title: 'All', items, icon: <ListIcon />},
 		];
