@@ -64,8 +64,6 @@ class App extends Component {
 
 		if (value === '') return;
 
-		console.log("VALUE is", input)
-
 		 this.setState( previousState =>{
 			const {items = []} = previousState;
 			const {taskIdCounter = 0} = previousState;
@@ -92,9 +90,7 @@ class App extends Component {
 				 }),
 
 			 }).then(r=>console.log(r))
-
 				 items.push(newTask);
-
 			 return {
 				 items: items.sort(sortBy('id')),
 				 submitDisabled: false,
@@ -102,10 +98,11 @@ class App extends Component {
 			 }
 
 		}, function stateUpdateComplete() {
-			//	this.taskInput.input.value = '';
-			this.updateLocalStorageItems(this.state.items);
+			this.taskInput.input.value = '';
+			//this.updateLocalStorageItems(this.state.items);
 			this.updateTaskCounter(this.state.taskIdCounter);
 		}.bind(this));
+	//	this.render()
 	};
 
 	/**
@@ -154,14 +151,6 @@ class App extends Component {
 		} else if ((value.length === 0) && !this.state.submitDisabled) {
 			this.setState({submitDisabled: true});
 		}
-	};
-
-	/**
-	 * @description Save items to local storage.
-	 * @param {Object[]} items - Array of items/tasks to be saved.
-	 */
-	updateLocalStorageItems = (items) => {
-		window.localStorage.setItem('toDoListItems', JSON.stringify(items));
 	};
 
 	/**
@@ -243,8 +232,22 @@ class App extends Component {
 	};
 
 	componentDidMount() {
-		const {items = []} = this.state;
+			/*const columns = [
 
+				{title: 'To Do', items: items /!*.filter( item => item.status === 'To Do')*!/, icon: <TodoIcon/>},
+				//	{ title: 'Done', items: items.filter( item => item.status === 'Done'), icon: <CheckIcon />},
+				//	{ title: 'All', items, icon: <ListIcon />},
+			];
+		return {
+
+			items: items.sort(sortBy('id')),
+
+		}
+*/
+		}
+
+	render() {
+		const {items = []} = this.state;
 		let url = "http://localhost:8080/v1/tasks?offset=1&limit=20";
 		fetch(url, {
 			method: 'GET',
@@ -255,40 +258,35 @@ class App extends Component {
 
 		})
 			.then(async function(data) {
+
 				let commits = await data.json();
 
+
+
+				for (let i = 0; i < commits.length; i++) {
+
+					let receivedTask = {
+						id: commits[i].id,
+						title: commits[i].title,
+						date: commits[i].date,
+						time: commits[i].time,
+						status: 'To Do'
+					};
+					console.log("элемент", commits[i])
+					items.push(receivedTask)
+				}
 				console.log("ОТВЕТ", commits.length)
 
-				for (var i = 0; i < commits.length; i++) {
-					console.log("элемент",commits[i])
-					items.push(commits[i])
-				}
-
-	})
+			})
+			.catch(err=>console.log("error"))
 
 
-	console.log("ITEMS ARE", items)
-			const columns = [
-
-				{title: 'To Do', items: items /*.filter( item => item.status === 'To Do')*/, icon: <TodoIcon/>},
-				//	{ title: 'Done', items: items.filter( item => item.status === 'Done'), icon: <CheckIcon />},
-				//	{ title: 'All', items, icon: <ListIcon />},
-			];
-		return {
-
-			items: items.sort(sortBy('id')),
-
-		}
-
-		}
-
-	render() {
-		const {items = []} = this.state;
+		console.log("ITEMS ARE" , items)
 
 
-		const columns = [
 
-			{title: 'To Do', items: items/*.filter( item => item.status === 'To Do')*/, icon: <TodoIcon/>},
+		let columns = [
+			{title: 'To Do', items: items.filter( item => item.status === 'To Do'), icon: <TodoIcon/>},
 			//	{ title: 'Done', items: items.filter( item => item.status === 'Done'), icon: <CheckIcon />},
 			//	{ title: 'All', items, icon: <ListIcon />},
 		];
