@@ -54,7 +54,7 @@ class App extends Component {
 	 * Lifecycle event handler called just after the App loads into the DOM.
 	 * Get any saved items and taskIdCounter from the local storage and setup state with it.
 	 */
-
+	
 	/**
 	 * @description Add task to the To Do list.
 	 */
@@ -87,6 +87,7 @@ class App extends Component {
 					 Time: "",
 					 Date: null,
 					 Shared: true,
+					 Status: "To Do",
 				 }),
 
 			 }).then(r=>console.log(r))
@@ -102,7 +103,6 @@ class App extends Component {
 			//this.updateLocalStorageItems(this.state.items);
 			this.updateTaskCounter(this.state.taskIdCounter);
 		}.bind(this));
-	//	this.render()
 	};
 
 	/**
@@ -231,65 +231,20 @@ class App extends Component {
 		}
 	};
 
-	componentDidMount() {
-			/*const columns = [
-
-				{title: 'To Do', items: items /!*.filter( item => item.status === 'To Do')*!/, icon: <TodoIcon/>},
-				//	{ title: 'Done', items: items.filter( item => item.status === 'Done'), icon: <CheckIcon />},
-				//	{ title: 'All', items, icon: <ListIcon />},
-			];
-		return {
-
-			items: items.sort(sortBy('id')),
-
-		}
-*/
-		}
-
 	render() {
-		const {items = []} = this.state;
-		let url = "http://localhost:8080/v1/tasks?offset=1&limit=20";
-		fetch(url, {
-			method: 'GET',
-			headers: {
-				Accept: 'application/json',
-				'Content-Type': 'application/json',
-			},
-
-		})
-			.then(async function(data) {
-
-				let commits = await data.json();
-
-
-
-				for (let i = 0; i < commits.length; i++) {
-
-					let receivedTask = {
-						id: commits[i].id,
-						title: commits[i].title,
-						date: commits[i].date,
-						time: commits[i].time,
-						status: 'To Do'
-					};
-					console.log("элемент", commits[i])
-					items.push(receivedTask)
-				}
-				console.log("ОТВЕТ", commits.length)
-
-			})
-			.catch(err=>console.log("error"))
-
-
-		console.log("ITEMS ARE" , items)
-
-
-
-		let columns = [
-			{title: 'To Do', items: items.filter( item => item.status === 'To Do'), icon: <TodoIcon/>},
-			//	{ title: 'Done', items: items.filter( item => item.status === 'Done'), icon: <CheckIcon />},
-			//	{ title: 'All', items, icon: <ListIcon />},
+		const { items = [] }  = this.state;
+		const columns = [
+			{ title: 'To Do', items: items.filter( item => item.status === 'To Do'), icon: <TodoIcon />},
+			{ title: 'Done', items: items.filter( item => item.status === 'Done'), icon: <CheckIcon />},
+			{ title: 'All', items, icon: <ListIcon />},
 		];
+
+		console.log("ITEMS WITHOUT FILTER", items)
+		console.log("ITEMS WITH FILTER items.filter( item => item.Status === 'To Do')" , items.filter( item => {
+			return (item.Description === "description")
+		}));
+
+
 		{
 		return (
 				<MuiThemeProvider>
@@ -336,13 +291,13 @@ class App extends Component {
 									value={this.state.slideIndex}
 								>
 									{columns.map((column, index) => (
+
 										<Tab
 											key={index}
 											value={index}
 											icon={column.icon}
 											label={
 												<div>
-													{column.title} ({(column.title !== 'All') ? column.items.filter(item => item.status === column.title).length : items.length})
 												</div>
 											}
 										/>
