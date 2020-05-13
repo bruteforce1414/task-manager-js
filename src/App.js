@@ -54,7 +54,7 @@ class App extends Component {
 	 * Lifecycle event handler called just after the App loads into the DOM.
 	 * Get any saved items and taskIdCounter from the local storage and setup state with it.
 	 */
-	
+
 	/**
 	 * @description Add task to the To Do list.
 	 */
@@ -230,6 +230,36 @@ class App extends Component {
 			// put the login here
 		}
 	};
+
+	componentDidMount() {
+		let self =this;
+		let commits;
+		let {items = []} = this.state;
+		let url = "http://localhost:8080/v1/tasks?offset=1&limit=20";
+		fetch(url, {
+			method: 'GET',
+			headers: {
+				Accept: 'application/json',
+				'Content-Type': 'application/json',
+			},
+
+		})
+			.then(async function(data) {
+				commits = await data.json();
+				for (let i = 0; i < commits.length; i++) {
+					items.push(commits[i])
+				}
+				self.setState({items:items})
+				console.log("Количество записей из базы данных:", commits.length)
+
+
+
+			})
+			.catch(err=>console.log("error", err));
+
+	}
+
+
 
 	render() {
 		const { items = [] }  = this.state;
