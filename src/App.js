@@ -82,12 +82,12 @@ class App extends Component {
 					 'Content-Type': 'application/json',
 				 },
 				 body: JSON.stringify({
-					 Title: value,
-					 Description: "description",
-					 Time: "",
-					 Date: null,
-					 Shared: true,
-					 Status: "To Do",
+					 title: value,
+					 description: "description",
+					 time: "",
+					 date: null,
+					 shared: true,
+					 status: "To Do",
 				 }),
 
 			 }).then(r=>console.log(r))
@@ -251,9 +251,6 @@ class App extends Component {
 				}
 				self.setState({items:items})
 				console.log("Количество записей из базы данных:", commits.length)
-
-
-
 			})
 			.catch(err=>console.log("error", err));
 
@@ -270,7 +267,7 @@ class App extends Component {
 		];
 
 		console.log("ITEMS WITHOUT FILTER", items)
-		console.log("ITEMS WITH FILTER items.filter( item => item.Status === 'To Do')" , items.filter( item => {
+		console.log("ITEMS WITH FILTER items.filter( item => item.status === 'To Do')" , items.filter( item => {
 			return (item.Description === "description")
 		}));
 
