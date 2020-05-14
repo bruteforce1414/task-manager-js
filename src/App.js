@@ -127,8 +127,21 @@ class App extends Component {
 	 * @description Remove task.
 	 * @param {Object} task - The task to be removed.
 	 */
+
+
+
+
+
 	handleRemoveTask = (task) => {
 		this.setState(previousState => {
+			fetch("http:localhost8080/v1/tasks/"+task.id, {
+				method: 'DELETE',
+				headers: {
+					Accept: 'application/json',
+					'Content-Type': 'application/json',
+				},
+			}).then(r=>console.log(r))
+
 			const {items} = previousState;
 			const filteredItems = items.filter(item => item.id !== task.id);
 			return {
@@ -196,13 +209,13 @@ class App extends Component {
 	/**
 	 * @description Remove all tasks from the App.
 	 */
-	clearTasks = () => {
+/*	clearTasks = () => {
 		this.handleDialogClose();
 		this.setState({removeMode: false, items: []}, function stateUpdateComplete() {
 			// Update local storage
 			this.updateLocalStorageItems(this.state.items);
 		});
-	};
+	};*/
 
 	/**
 	 * @description Open the clear tasks dialog.
