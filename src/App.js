@@ -17,6 +17,8 @@ import ColumnList from './ColumnList';
 import ConfirmDialog from './ConfirmDialog';
 import If from './If';
 import './App.css';
+
+
 //import * as $ from "react/lib/ReactDOMFactories";
 
 /**
@@ -68,13 +70,15 @@ class App extends Component {
 			const {items = []} = previousState;
 			const {taskIdCounter = 0} = previousState;
 			const taskId = taskIdCounter + 1;
-			const newTask = {
+			 const newTask = {
 				id: taskId,
 				title: value,
-				date: new Date().getDate() + "." + (new Date().getMonth() + 1) + "." + new Date().getFullYear(),
-				time: new Date().getHours() + ":" + new Date().getMinutes() + ":" + new Date().getSeconds(),
+				date: new Date(),
 				status: 'To Do'
 			};
+
+
+
 			 fetch("http://localhost:8080/v1/tasks", {
 				 method: 'POST',
 				 headers: {
@@ -84,8 +88,7 @@ class App extends Component {
 				 body: JSON.stringify({
 					 title: value,
 					 description: "description",
-					 time: "",
-					 date: new Date().getDate() + "." + (new Date().getMonth() + 1) + "." + new Date().getFullYear(),
+					 date: new Date,
 					 shared: true,
 					 status: "To Do",
 				 }),
@@ -115,7 +118,23 @@ class App extends Component {
 			const filteredItems = items.filter(item => item.id !== task.id);
 			task.status = (task.status === 'To Do') ? 'Done' : 'To Do';
 			filteredItems.push(task);
-			return {
+			fetch("http://localhost:8080/v1/tasks", {
+				method: 'PUT',
+				headers: {
+					Accept: 'application/json',
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({
+					id:task.id,
+					title: task.title,
+					description: task.description,
+					date: new Date(),
+					shared: true,
+					status: "Done",
+				})
+			}).then(r => console.log(r))
+
+				return {
 				items: filteredItems.sort(sortBy('id'))
 			}
 		}, function stateUpdateComplete() {
@@ -291,7 +310,7 @@ class App extends Component {
 
 		console.log("ITEMS WITHOUT FILTER", items)
 		console.log("ITEMS WITH FILTER items.filter( item => item.status === 'To Do')" , items.filter( item => {
-			return (item.Description === "description")
+			return (item.status === "To Do")
 		}));
 
 
@@ -348,6 +367,7 @@ class App extends Component {
 											icon={column.icon}
 											label={
 												<div>
+													{column.title} ({(column.title !== 'All') ? column.items.filter(item => item.status === column.title).length: items.length})
 												</div>
 											}
 										/>
