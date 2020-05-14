@@ -134,7 +134,9 @@ class App extends Component {
 
 	handleRemoveTask = (task) => {
 		this.setState(previousState => {
-			fetch("http:localhost8080/v1/tasks/"+task.id, {
+
+			console.log("taskId", task.id)
+			fetch("http://localhost:8080/v1/tasks/"+task.id, {
 				method: 'DELETE',
 				headers: {
 					Accept: 'application/json',
@@ -164,6 +166,14 @@ class App extends Component {
 		} else if ((value.length === 0) && !this.state.submitDisabled) {
 			this.setState({submitDisabled: true});
 		}
+	};
+
+	/**
+	 * @description Save items to local storage.
+	 * @param {Object[]} items - Array of items/tasks to be saved.
+	 */
+	updateLocalStorageItems = (items) => {
+		window.localStorage.setItem('toDoListItems', JSON.stringify(items));
 	};
 
 	/**
