@@ -85,7 +85,7 @@ class App extends Component {
 					 title: value,
 					 description: "description",
 					 time: "",
-					 date: null,
+					 date: new Date().getDate() + "." + (new Date().getMonth() + 1) + "." + new Date().getFullYear(),
 					 shared: true,
 					 status: "To Do",
 				 }),
