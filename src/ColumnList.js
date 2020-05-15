@@ -69,7 +69,7 @@ const ColumnList = (props) => {
 									<DeleteIcon style={{visibility: 'hidden'}} />}
 							>
 								<Checkbox
-									label={item.title+" "+item.date}
+									label={item.title+"          "+item.date}
 									disabled={props.removeMode}
 									checked={item.status === 'Done'}
 									className={(item.status === 'Done') ? 'task-done': ''}

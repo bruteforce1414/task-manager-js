@@ -209,7 +209,7 @@ class App extends Component {
 	 * @param {Object[]} items - Array of items/tasks to be saved.
 	 */
 	updateLocalStorageItems = (items) => {
-		window.localStorage.setItem('toDoListItems', JSON.stringify(items));
+	//	window.localStorage.setItem('toDoListItems', JSON.stringify(items));
 	};
 
 	/**
@@ -217,7 +217,7 @@ class App extends Component {
 	 * @param {number} taskCounter - Id of the task to be saved at local storage.
 	 */
 	updateTaskCounter = (taskCounter) => {
-		window.localStorage.setItem('taskIdCounter', taskCounter);
+	//	window.localStorage.setItem('taskIdCounter', taskCounter);
 	};
 
 	/**
