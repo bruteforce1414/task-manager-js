@@ -94,9 +94,24 @@ class App extends Component {
 					 status: "To Do",
 				 }),
 
-			 }).then(r=>console.log(r))
-				 items.push(newTask);
-			 self.setState({items:items})
+			 })	.then(async function(data) {
+				let commit = await data.json();
+				 const addedTask = {
+					 id: commit.id,
+					 title: commit.title,
+					 date: commit.date,
+					 status: commit.status,
+				 };
+
+					 items.push(addedTask)
+
+				 self.setState({items:items})
+			 })
+				 .catch(err=>console.log("error", err));
+
+
+
+			// self.setState({items:items})
 			 return {
 				 items: items.sort(sortBy('id')),
 				 submitDisabled: false,
@@ -311,7 +326,7 @@ class App extends Component {
 			{ title: 'All', items, icon: <ListIcon />},
 		];
 
-		console.log("ITEMS WITHOUT FILTER", items)
+	//	console.log("ITEMS WITHOUT FILTER", items)
 		console.log("ITEMS WITH FILTER items.filter( item => item.status === 'To Do')" , items.filter( item => {
 			return (item.status === "To Do")
 		}));
