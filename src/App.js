@@ -88,8 +88,8 @@ class App extends Component {
 				 },
 				 body: JSON.stringify({
 					 title: value,
-					 description: "description",
-					 date: new Date,
+					 description: "",
+					 date: new Date(),
 					 shared: true,
 					 status: "To Do",
 				 }),
@@ -102,9 +102,8 @@ class App extends Component {
 					 date: commit.date,
 					 status: commit.status,
 				 };
-
-					 items.push(addedTask)
-
+				 items.push(addedTask)
+				console.log("COMMIT", commit)
 				 self.setState({items:items})
 			 })
 				 .catch(err=>console.log("error", err));
