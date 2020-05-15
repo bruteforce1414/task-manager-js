@@ -63,6 +63,7 @@ class App extends Component {
 	addTask = () => {
 		const input = this.taskInput.input || {};
 		const {value = ''} = input;
+		let self=this;
 
 		if (value === '') return;
 
@@ -95,6 +96,7 @@ class App extends Component {
 
 			 }).then(r=>console.log(r))
 				 items.push(newTask);
+			 self.setState({items:items})
 			 return {
 				 items: items.sort(sortBy('id')),
 				 submitDisabled: false,
@@ -118,6 +120,7 @@ class App extends Component {
 			const filteredItems = items.filter(item => item.id !== task.id);
 			task.status = (task.status === 'To Do') ? 'Done' : 'To Do';
 			filteredItems.push(task);
+			console.log("task.id", task.id)
 			fetch("http://localhost:8080/v1/tasks", {
 				method: 'PUT',
 				headers: {
