@@ -71,13 +71,14 @@ class App extends Component {
 			const {items = []} = previousState;
 			const {taskIdCounter = 0} = previousState;
 			const taskId = taskIdCounter + 1;
-			 /* const newTask = {
+			 const newTask = {
 				id: taskId,
 				title: value,
 				date: new Date(),
 				status: 'To Do'
 			};
- */
+
+
 
 			 fetch("http://localhost:8080/v1/tasks", {
 				 method: 'POST',
