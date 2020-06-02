@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {CSSTransitionGroup} from 'react-transition-group';
+import {CSSTransition} from 'react-transition-group';
 import Checkbox from 'material-ui/Checkbox';
 import {List, ListItem} from 'material-ui/List';
 import MobileTearSheet from './MobileTearSheet';
@@ -57,7 +57,7 @@ const ColumnList = (props) => {
 		<div className="column-list">
 			<MobileTearSheet style={{pading: 10}}>
 				<List>
-					<CSSTransitionGroup
+					<CSSTransition
 						transitionName="task-animation"
 						transitionEnterTimeout={500}
 						transitionLeaveTimeout={300}>
@@ -76,7 +76,7 @@ const ColumnList = (props) => {
 								/>
 							</ListItem>
 						))}
-					</CSSTransitionGroup>
+					</CSSTransition>
 				</List>
 			</MobileTearSheet>
 		</div>

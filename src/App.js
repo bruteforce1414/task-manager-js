@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import sortBy from 'sort-by';
-import {CSSTransitionGroup} from 'react-transition-group';
+import {CSSTransition} from 'react-transition-group';
 import SwipeableViews from 'react-swipeable-views';
 import AppBar from 'material-ui/AppBar';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
@@ -333,8 +333,10 @@ class App extends Component {
 
 		{
 		return (
-				<MuiThemeProvider>
-					<div className="App">
+										<MuiThemeProvider>
+																<div className="App">
+
+
 						{/* Clear Tasks Confirmation Dialog */}
 						<ConfirmDialog
 							title="Clear All Tasks"
@@ -392,7 +394,7 @@ class App extends Component {
 								</Tabs>
 							</div>
 							<div className="app-separator">-</div>
-							<CSSTransitionGroup
+							<CSSTransition
 								transitionName="remove-mode-animation"
 								transitionEnterTimeout={300}
 								transitionLeaveTimeout={300}>
@@ -426,7 +428,7 @@ class App extends Component {
 										))}
 									</SwipeableViews>
 								</div>
-							</CSSTransitionGroup>
+							</CSSTransition>
 						</div>
 						<div className="enable-remove-mode">
 							<If test={!this.state.removeMode}>
@@ -440,8 +442,10 @@ class App extends Component {
 								</FloatingActionButton>
 							</If>
 						</div>
-					</div>
-				</MuiThemeProvider>
+						</div>
+
+						</MuiThemeProvider>
+
 			);
 		}
 	}
