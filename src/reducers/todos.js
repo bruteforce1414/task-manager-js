@@ -20,10 +20,7 @@ const todos = (state = [], action) => {
               date: new Date(),
               status: 'To Do'
             };
-      
-      
-      
-             fetch("http://localhost:8080/v1/tasks", {
+            fetch("http://localhost:8080/v1/tasks", {
                method: 'POST',
                headers: {
                  Accept: 'application/json',
@@ -69,7 +66,7 @@ const todos = (state = [], action) => {
       case 'TOGGLE_TODO':
         return state.map(todo =>
           todo.id === action.id ? { ...todo, completed: !todo.completed } : todo
-        )
+        );
       default:
         return state
     }

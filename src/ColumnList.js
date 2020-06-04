@@ -59,8 +59,8 @@ const ColumnList = (props) => {
 				<List>
 					<CSSTransition
 						transitionName="task-animation"
-						transitionEnterTimeout={500}
-						transitionLeaveTimeout={300}>
+						transitionEnterTimeout={1000}
+						transitionLeaveTimeout={1000}>
 						{props.items.map(item => (
 							<ListItem
 								key={item.id+item.title}
