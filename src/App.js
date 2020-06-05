@@ -35,6 +35,7 @@ export default class App  extends Component {
 
 
   componentDidMount() {
+    console.log("this.componentDidMount")
 		let self =this;
 		let commits;
 		let {items = []} = this.state;
@@ -50,9 +51,13 @@ export default class App  extends Component {
 			.then(async function(data) {
 				commits = await data.json();
 				for (let i = 0; i < commits.length; i++) {
-					items.push(commits[i])
+					AddTodo(commits[i]);					
+					console.log("commits[i]", commits[i]);
+					items.push(commits[i]);
+					
 				}
-				self.setState({items:items})
+
+				//self.setState({items:items})
 				console.log("Количество записей из базы данных:", commits.length)
 			})
       .catch(err=>console.log("error", err));
