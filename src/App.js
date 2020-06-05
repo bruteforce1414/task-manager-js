@@ -3,6 +3,7 @@ import Footer from '../src/components/Footer';
 import AddTodo from '../src/containers/AddTodo';
 import VisibleTodoList, {getVisibleTodos} from '../src/containers/VisibleTodoList';
 import {addTodo} from '../src/actions';
+import TodoList from '../src/components/TodoList';
 
 
 
@@ -56,8 +57,12 @@ export default class App  extends Component {
 					console.log("commits[i]", commits[i]);
 					console.log("addTodo", addTodo(commits[i]));
 					items.push(commits[i]);
+
+				
 					
 				}
+				console.log("items", items);
+				TodoList(items, "");
 
 				//self.setState({items:items})
 				console.log("Количество записей из базы данных:", commits.length)
@@ -75,6 +80,7 @@ export default class App  extends Component {
       <div>
       <AddTodo />
       <VisibleTodoList />
+	  
       <Footer />
     </div>
     )
