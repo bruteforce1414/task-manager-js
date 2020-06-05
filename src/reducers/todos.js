@@ -9,6 +9,16 @@ const todos = (state = [], action) => {
           completed: false
         }
       ]
+    
+    case 'GET_TASKS':
+      return [
+        ...state,
+        {
+          id: action.id,
+          text: action.text,
+          completed: false
+        }
+      ]  
     case 'TOGGLE_TODO':
       return state.map(todo =>
         todo.id === action.id ? { ...todo, completed: !todo.completed } : todo

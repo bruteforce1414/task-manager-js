@@ -1,7 +1,9 @@
 import React, {Component} from 'react';
 import Footer from '../src/components/Footer';
 import AddTodo from '../src/containers/AddTodo';
-import VisibleTodoList from '../src/containers/VisibleTodoList';
+import VisibleTodoList, {getVisibleTodos} from '../src/containers/VisibleTodoList';
+import {addTodo} from '../src/actions';
+
 
 
 
@@ -51,8 +53,8 @@ export default class App  extends Component {
 			.then(async function(data) {
 				commits = await data.json();
 				for (let i = 0; i < commits.length; i++) {
-					AddTodo(commits[i]);					
 					console.log("commits[i]", commits[i]);
+					console.log("addTodo", addTodo(commits[i]));
 					items.push(commits[i]);
 					
 				}
